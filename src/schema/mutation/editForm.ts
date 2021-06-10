@@ -2,6 +2,7 @@ import { GraphQLNonNull, GraphQLID, GraphQLString, GraphQLError, GraphQLBoolean 
 import GraphQLJSON from 'graphql-type-json';
 import { Form, Resource, Version, Channel, Notification } from '../../models';
 import buildTypes from '../../utils/buildTypes';
+import pubsub from "../../server/pubsub";
 import extractFields from '../../utils/extractFields';
 import findDuplicates from '../../utils/findDuplicates';
 import deleteContent from '../../services/deleteContent';
@@ -27,6 +28,7 @@ export default {
     async resolve(parent, args, context) {
         // Authentication check
         const user = context.user;
+        let userId: any = user._id;
         if (!user) { throw new GraphQLError(errors.userNotLogged); }
 
         const ability: AppAbility = context.user.ability;
@@ -139,8 +141,16 @@ export default {
             update.isLocked = args.isLocked;
             update.isLockedBy = user._id;
         } else {
-            update.isLocked = false;
-            update.isLockedBy = [];
+            userId = [];
+            Object.assign(update,
+                new Boolean(args.isLocked) && { isLocked: args.isLocked },
+                userId && { isLockedBy: userId }
+                )
+            const publisher = await pubsub();
+            publisher.publish('app_unlocked', { 
+                form: args.id,
+                user: user.id
+            });
         }
         if (args.name) {
             update.name = args.name;
@@ -156,6 +166,8 @@ export default {
             }
         }
         await version.save();
+        console.log("args = ", args);
+        console.log("update = ", update);
         return Form.findByIdAndUpdate(
             args.id,
             update,
