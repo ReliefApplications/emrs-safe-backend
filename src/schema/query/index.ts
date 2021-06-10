@@ -23,6 +23,7 @@ import applications from './applications';
 import permissions from './permissions';
 import channels from './channels';
 import positionAttributes from './positionAttributes';
+import clients from './clients';
 import apiConfiguration from './apiConfiguration';
 import apiConfigurations from './apiConfigurations';
 
@@ -55,7 +56,8 @@ const Query = new GraphQLObjectType({
         users,
         workflow,
         workflows,
-        positionAttributes
+        positionAttributes,
+        clients
     }
 });
 
