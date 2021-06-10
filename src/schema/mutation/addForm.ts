@@ -76,7 +76,9 @@ export default {
                         resource,
                         structure,
                         fields,
-                        permissions
+                        permissions,
+                        isLocked: false,
+                        isLockedBy: []
                     });
                     await form.save();
                     buildTypes();
@@ -98,7 +100,9 @@ export default {
                     name: args.name,
                     createdAt: new Date(),
                     status: 'pending',
-                    permissions
+                    permissions,
+                    isLocked: false,
+                    isLockedBy: []
                 });
                 await form.save();
                 buildTypes();

@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLBoolean, GraphQLList, GraphQLInt } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { AccessType, ResourceType, RecordType, VersionType } from '.';
-import { Resource, Record, Version } from '../../models';
+import { AccessType, ResourceType, RecordType, VersionType, UserType } from '.';
+import { Resource, Record, Version, User } from '../../models';
 import { AppAbility } from '../../security/defineAbilityFor';
 import convertFilter from '../../utils/convertFilter';
 import getFilters from '../../utils/getFilters';
@@ -15,6 +15,13 @@ export const FormType = new GraphQLObjectType({
         modifiedAt: { type: GraphQLString },
         structure: { type: GraphQLJSON },
         status: { type: GraphQLString },
+        isLocked: { type: GraphQLBoolean },
+        isLockedBy: {
+            type: UserType,
+            resolve(parent) {
+                return User.findById(parent.isLockedBy);
+            },
+        },
         permissions: {
             type: AccessType,
             resolve(parent, args, context) {

@@ -1,4 +1,4 @@
-import { GraphQLNonNull, GraphQLID, GraphQLString, GraphQLError } from 'graphql';
+import { GraphQLNonNull, GraphQLID, GraphQLString, GraphQLError, GraphQLBoolean } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { Form, Resource, Version, Channel, Notification } from '../../models';
 import buildTypes from '../../utils/buildTypes';
@@ -21,7 +21,8 @@ export default {
         structure: { type: GraphQLJSON },
         status: { type: GraphQLString },
         name: { type: GraphQLString },
-        permissions: { type: GraphQLJSON }
+        permissions: { type: GraphQLJSON },
+        isLocked: { type: GraphQLBoolean }
     },
     async resolve(parent, args, context) {
         // Authentication check
@@ -133,6 +134,13 @@ export default {
                     update.channel = [];
                 }
             }
+        }
+        if (args.isLocked) {
+            update.isLocked = args.isLocked;
+            update.isLockedBy = user._id;
+        } else {
+            update.isLocked = false;
+            update.isLockedBy = [];
         }
         if (args.name) {
             update.name = args.name;

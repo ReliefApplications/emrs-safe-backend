@@ -8,6 +8,11 @@ const formSchema = new Schema({
     modifiedAt: Date,
     structure: mongoose.Schema.Types.Mixed,
     core: Boolean,
+    isLocked: Boolean,
+    isLockedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     status: {
         type: String,
         enum: Object.values(status)
@@ -91,6 +96,8 @@ export interface Form extends Document {
     structure?: any;
     core?: boolean;
     status?: string;
+    isLocked?: boolean;
+    isLockedBy?: any;
     permissions?: {
         canSee?: any[],
         canCreate?: any[],
