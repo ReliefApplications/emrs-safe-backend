@@ -80,7 +80,9 @@ const formSchema = new Schema({
     channel: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Channel'
-    }
+    },
+    koboUrl: String,
+    uid: String
 });
 
 export interface Form extends Document {
@@ -106,6 +108,8 @@ export interface Form extends Document {
     resource?: any;
     versions?: any[];
     channel?: any;
+    koboUrl?: string;
+    uid?: string;
 }
 
 formSchema.index({ resource: 1 }, { unique: true, partialFilterExpression: { core: true} });
